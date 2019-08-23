@@ -1,4 +1,4 @@
-# Basic Ubuntu Container Setup steps
+# Basic Ubuntu Container Setup
 
 Create a new container 
 * Open Proxmox web interface
