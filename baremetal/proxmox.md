@@ -13,7 +13,7 @@ password: the one you entered during setup
 
 Complete online setup.
 
-Next checkout the (template)[./ubuntu.md] for a new Ubuntu container and set up some fundamental containers, such as
+Next checkout the [template](./ubuntu.md) for a new Ubuntu container and set up some fundamental containers, such as
 * An SQL Server
 * An NFS Server
 * An NGINX Server
