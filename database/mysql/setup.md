@@ -58,14 +58,14 @@ while `-v` will provide verbose output. Be sure not to put a trailing backslash 
 We want rsync to transfer the directory onto the mountpoint, not the contents of the directory.
 
 ```
-sudo rsync -av /var/lib/mysql /ssd_raid
+sudo rsync -av /var/lib/mysql /[ssd_raid]
 ```
 
 You can double check that the move was successful by verifying the contents of the output folder
 
 ```
-mysql@MySQL:~$ tree /ssd_raid -L 2 
-/ssd_raid 
+mysql@MySQL:~$ tree /[ssd_raid] -L 2 
+/[ssd_raid]
 └ mysql
 	├ auto.cnf
 	├ debian-5.7.flag
@@ -104,7 +104,7 @@ to your new mount point
 
 ```
 ...
-datadir         = /ssd_raid/mysql
+datadir         = /[ssd_raid]/mysql
 ...
 ```
 
@@ -118,7 +118,7 @@ Add the following alias rule to the bottom of the file
 
 ```
 ...
-alias /var/lib/mysql/ -> /ssd_raid/mysql/,
+alias /var/lib/mysql/ -> /[ssd_raid]/mysql/,
 ```
 
 Restart apparmor
