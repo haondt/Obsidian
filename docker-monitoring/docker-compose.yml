@@ -43,7 +43,7 @@ services:
   telegraf:
     image: telegraf:latest
     container_name: telegraf
-    user: "$PUID:${DOCKER_GROUP}"
+    user: "telegraf:${DOCKER_GROUP}"
     group_add:
       - "${DOCKER_GROUP}"
     hostname: docker-monitoring
