@@ -10,7 +10,9 @@ docker-monitoring
 Find services available at the following:
 | Url | Service |
 |---|---|
+| http://docker-media:8686 | lidarr |
+| http://docker-media-watcher:8181 | tautulli |
 | http://docker-monitoring:9000 | portainer |
 | http://docker-monitoring:3000 | grafana |
 | http://docker-monitoring:8086 | influxdb |
-| http://docker-media:8686 | lidarr |
+| http://docker-monitoring:9090 | prometheus |
