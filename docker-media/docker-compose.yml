@@ -1,4 +1,5 @@
 version: "3.2"
+name: docker-media
 services:
   portainer:
     image: portainer/agent:latest
@@ -45,3 +46,14 @@ services:
       - /sys:/rootfs/sys:ro
       - /proc:/rootfs/proc:ro
       - /etc:/rootfs/etc:ro
+  promtail:
+    image: grafana/promtail:2.7.1
+    container_name: promtail
+    group_add:
+      - "${DOCKER_GROUP}"
+      - "${PGID}"
+    volumes:
+      - ./promtail/promtail-config.yml:/etc/promtail/config.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/containers:/var/lib/docker/containers
+
