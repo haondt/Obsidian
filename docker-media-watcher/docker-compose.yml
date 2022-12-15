@@ -1,0 +1,45 @@
+version: "3.2"
+name: docker-media-watcher
+services:
+  portainer:
+    image: portainer/agent:latest
+    labels:
+      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.service: "portainer-agent"
+    container_name: portainer_agent
+    ports:
+      - 9001:9001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    restart: unless-stopped
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    labels:
+      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.service: "tautulli"
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+    ports:
+      - 8181:8181
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DATA_DIR}/tautulli/config:/config
+  qbittorrent_exporter:
+    image: esanchezm/prometheus-qbittorrent-exporter:latest
+    container_name: qbittorrent_exporter
+    labels:
+      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.service: "qbittorrent-exporter"
+    environment:
+      QBITTORRENT_PORT: 8080
+      QBITTORRENT_HOST: deluge
+      QBITTORRENT_USER: "admin"
+      QBITTORRENT_PASS: "adminadmin"
+      EXPORTER_PORT: 59571
+    ports:
+      - 59571:59571
+
+
