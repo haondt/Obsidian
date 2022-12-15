@@ -57,9 +57,19 @@ services:
       HOST_PROC: /rootfs/proc
       HOST_SYS: /rootfs/sys
       HOST_ETC: /rootfs/etc
+      INFLUXDB_TELEGRAF_TOKEN: "${INFLUXDB_TELEGRAF_TOKEN}"
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - /sys:/rootfs/sys:ro
       - /proc:/rootfs/proc:ro
       - /etc:/rootfs/etc:ro
+  loki:
+    image: grafana/loki:2.7.1
+    container_name: loki
+    ports:
+      - 3100:3100
+    group_add:
+      - "${PGID}"
+    volumes:
+      - ${LOKI_DATA}:/loki
