@@ -73,3 +73,11 @@ services:
       - "${PGID}"
     volumes:
       - ${LOKI_DATA}:/loki
+  prometheus:
+    image: prom/prometheus:v2.40.7
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ${PROMETHEUS_DATA}:/prometheus
