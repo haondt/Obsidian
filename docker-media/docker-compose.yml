@@ -3,6 +3,9 @@ name: docker-media
 services:
   portainer:
     image: portainer/agent:latest
+    labels:
+      com.obsidian.host: "docker-media"
+      com.obsidian.service: "portainer-agent"
     container_name: portainer_agent
     ports:
       - 9001:9001
@@ -13,6 +16,9 @@ services:
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
     container_name: lidarr
+    labels:
+      com.obsidian.host: "docker-media"
+      com.obsidian.service: "lidarr"
     environment:
       - PGID=${PGID}
       - PUID=${PUID}
@@ -27,6 +33,9 @@ services:
   telegraf:
     image: telegraf:latest
     container_name: telegraf
+    labels:
+      com.obsidian.host: "docker-media"
+      com.obsidian.service: "telegraf"
     user: "telegraf:${DOCKER_GROUP}"
     group_add:
       - "${DOCKER_GROUP}"
@@ -49,6 +58,9 @@ services:
   promtail:
     image: grafana/promtail:2.7.1
     container_name: promtail
+    labels:
+      com.obsidian.host: "docker-media"
+      com.obsidian.service: "promtail"
     group_add:
       - "${DOCKER_GROUP}"
       - "${PGID}"

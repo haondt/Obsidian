@@ -14,6 +14,7 @@ scrape_configs:
           - name: label
             values: ["com.docker.compose.project=docker-media"]
     relabel_configs:
-      - source_labels: ['__meta_docker_container_name']
-        regex: '/(.*)'
-        target_label: 'container'
+      - source_labels: ['__meta_docker_container_label_com_obsidian_service']
+        target_label: 'service'
+      - source_labels: ['__meta_docker_container_label_com_obsidian_host']
+        target_label: 'host'
