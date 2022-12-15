@@ -19,7 +19,6 @@ services:
       - "${PGID}"
     ports:
       - 8086:8086
-      - "8089:8089/udp"
     volumes:
       - ${INFLUXDB_DATA}:/var/lib/influxdb2
       - ./influxdb/influxdb.conf:/etc/influxdb2/influxdb.conf
