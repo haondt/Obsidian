@@ -12,36 +12,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
-  lidarr:
-    image: lscr.io/linuxserver/lidarr:latest
-    container_name: lidarr
-    labels:
-      com.obsidian.host: "docker-media"
-      com.obsidian.service: "lidarr"
-    environment:
-      - PGID=${PGID}
-      - PUID=${PUID}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ${DATA_DIR}/lidarr/config:/config
-      - ${VOLUME_1}:/mnt/0
-      - ${DOWNLOAD_DIR}:/RAID10Plex/transmission/completed
-    ports:
-      - 8686:8686
-  prowlarr:
-    image: lscr.io/linuxserver/prowlarr:develop
-    container_name: prowlarr
-    labels:
-      com.obsidian.host: "docker-media"
-      com.obsidian.service: "prowlarr"
-    environment:
-      - PGID=${PGID}
-      - PUID=${PUID}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - ${DATA_DIR}/prowlarr/config:/config
-    ports:
-      - 9696:9696
   telegraf:
     image: telegraf:latest
     container_name: telegraf
@@ -80,3 +50,33 @@ services:
       - ./promtail/promtail-config.yml:/etc/promtail/config.yml
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/containers:/var/lib/docker/containers
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    container_name: lidarr
+    labels:
+      com.obsidian.host: "docker-media"
+      com.obsidian.service: "lidarr"
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DATA_DIR}/lidarr/config:/config
+      - ${VOLUME_1}:/mnt/0
+      - ${DOWNLOAD_DIR}:/RAID10Plex/transmission/completed
+    ports:
+      - 8686:8686
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:develop
+    container_name: prowlarr
+    labels:
+      com.obsidian.host: "docker-media"
+      com.obsidian.service: "prowlarr"
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DATA_DIR}/prowlarr/config:/config
+    ports:
+      - 9696:9696
