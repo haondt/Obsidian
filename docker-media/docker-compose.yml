@@ -68,4 +68,3 @@ services:
       - ./promtail/promtail-config.yml:/etc/promtail/config.yml
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/containers:/var/lib/docker/containers
-
