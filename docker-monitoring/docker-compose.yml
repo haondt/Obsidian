@@ -12,11 +12,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
       - ${DATA_DIR}/portainer/data:/data
-    restart: unless-stopped
   influxdb:
     image: influxdb:1.8-alpine
     container_name: influxdb
-    restart: always
     ports:
       - 8086:8086
     volumes:
@@ -30,8 +28,8 @@ services:
       - INFLUXDB_ADMIN_PASSWORD=admin
   grafana:
     image: grafana/grafana:latest
+    user: "${PUID}:${PGID}"
     container_name: grafana
-    restart: always
     ports:
       - 3000:3000
     volumes:
@@ -42,12 +40,13 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
-      - PGID=${PGID}
-      - PUID=1000
   telegraf:
     image: telegraf:latest
     container_name: telegraf
-    restart: always
+    user: "$PUID:${DOCKER_GROUP}"
+    group_add:
+      - "${DOCKER_GROUP}"
+    hostname: docker-monitoring
     ports:
       - 57100:57100
       - 57500:57500
