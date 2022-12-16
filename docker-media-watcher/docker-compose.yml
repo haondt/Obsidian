@@ -116,6 +116,14 @@ services:
       TAUTULLI_URI: "http://tautulli:8181"
     ports:
       - 9487:9487
-
-
-
+  varken:
+    image: boerderij/varken:develop
+    container_name: varken
+    labels:
+      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.service: "varken"
+    group_add:
+      - "${PGID}"
+    volumes:
+      - ./varken/varken.ini:/config/varken.ini
+      - /etc/localtime:/etc/localtime:ro
