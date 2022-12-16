@@ -21,9 +21,6 @@ services:
     labels:
       com.obsidian.host: "docker-monitoring"
       com.obsidian.service: "influxdb"
-    labels:
-      com.obsidian.host: "docker-monitoring"
-      com.obsidian.service: "influxdb"
     group_add:
       - "${PGID}"
     ports:
@@ -38,6 +35,25 @@ services:
       - DOCKER_INFLUXDB_INIT_PASSWORD=passwordpassword
       - DOCKER_INFLUXDB_INIT_ORG=org
       - DOCKER_INFLUXDB_INIT_BUCKET=telemetry
+  influxdb18:
+    image: influxdb:1.8.10-alpine
+    container_name: influxdb18
+    labels:
+      com.obsidian.host: "docker-monitoring"
+      com.obsidian.service: "influxdb18"
+    group_add:
+      - "${PGID}"
+    ports:
+      - 9457:8086
+    volumes:
+      - ${INFLUXDB18_DATA}:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=telemetry
+      - INFLUXDB_USER=admin
+      - INFLUXDB_PASSWORD=admin
+      - INFLUXDB_ADMIN_ENABLED=true
+      - INFLUXDB_ADMIN_USER=admin
+      - INFLUXDB_ADMIN_PASSWORD=admin
   grafana:
     image: grafana/grafana:latest
     user: "${PUID}:${PGID}"
@@ -52,6 +68,7 @@ services:
       - ${DATA_DIR}/grafana/storage:/var/lib/grafana
     depends_on:
       - influxdb
+      - influxdb18
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
