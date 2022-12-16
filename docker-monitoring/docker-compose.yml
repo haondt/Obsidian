@@ -4,6 +4,9 @@ services:
   portainer:
     image: portainer/portainer-ce:latest
     container_name: portainer
+    labels:
+      com.obsidian.host: "docker-monitoring"
+      com.obsidian.service: "portainer"
     ports:
       - 8000:8000
       - 9443:9443
@@ -15,6 +18,12 @@ services:
   influxdb:
     image: influxdb:2.5-alpine
     container_name: influxdb
+    labels:
+      com.obsidian.host: "docker-monitoring"
+      com.obsidian.service: "influxdb"
+    labels:
+      com.obsidian.host: "docker-monitoring"
+      com.obsidian.service: "influxdb"
     group_add:
       - "${PGID}"
     ports:
@@ -33,6 +42,9 @@ services:
     image: grafana/grafana:latest
     user: "${PUID}:${PGID}"
     container_name: grafana
+    labels:
+      com.obsidian.host: "docker-monitoring"
+      com.obsidian.service: "grafana"
     ports:
       - 3000:3000
     volumes:
@@ -46,6 +58,9 @@ services:
   telegraf:
     image: telegraf:latest
     container_name: telegraf
+    labels:
+      com.obsidian.host: "docker-monitoring"
+      com.obsidian.service: "telegraf"
     user: "telegraf:${DOCKER_GROUP}"
     group_add:
       - "${DOCKER_GROUP}"
@@ -67,6 +82,9 @@ services:
   loki:
     image: grafana/loki:2.7.1
     container_name: loki
+    labels:
+      com.obsidian.host: "docker-monitoring"
+      com.obsidian.service: "loki"
     ports:
       - 3100:3100
     group_add:
@@ -76,6 +94,9 @@ services:
   prometheus:
     image: prom/prometheus:v2.40.7
     container_name: prometheus
+    labels:
+      com.obsidian.host: "docker-monitoring"
+      com.obsidian.service: "prometheus"
     group_add:
       - "${PGID}"
     ports:
