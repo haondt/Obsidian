@@ -105,4 +105,17 @@ services:
       APIKEY: "${LIDARR_API_KEY}"
     ports:
       - 9709:9709
+  tautulli_exporter:
+    image: nwalke/tautulli_exporter:latest
+    container_name: tautulli_exporter
+    labels:
+      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.service: "tautulli-exporter"
+    environment:
+      TAUTULLI_API_KEY: "${TAUTULLI_API_KEY}"
+      TAUTULLI_URI: "http://tautulli:8181"
+    ports:
+      - 9487:9487
+
+
 
