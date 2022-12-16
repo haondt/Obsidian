@@ -101,7 +101,7 @@ services:
     command: ["lidarr"]
     environment:
       PORT: 9709
-      URL: "http://docker-media:8989"
+      URL: "http://docker-media:8686"
       APIKEY: "${LIDARR_API_KEY}"
     ports:
       - 9709:9709
