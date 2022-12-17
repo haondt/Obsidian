@@ -48,7 +48,7 @@ services:
     volumes:
       - ${INFLUXDB18_DATA}:/var/lib/influxdb
     environment:
-      - INFLUXDB_DB=telemetry
+      - INFLUXDB_DB=varken
       - INFLUXDB_USER=admin
       - INFLUXDB_PASSWORD=admin
       - INFLUXDB_ADMIN_ENABLED=true
