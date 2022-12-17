@@ -89,6 +89,7 @@ services:
       HOST_PROC: /rootfs/proc
       HOST_SYS: /rootfs/sys
       HOST_ETC: /rootfs/etc
+      HOST_MOUNT_PREFIX: /rootfs
       INFLUXDB_TELEGRAF_TOKEN: "${INFLUXDB_TELEGRAF_TOKEN}"
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
@@ -96,6 +97,10 @@ services:
       - /sys:/rootfs/sys:ro
       - /proc:/rootfs/proc:ro
       - /etc:/rootfs/etc:ro
+      - /mnt/0:/rootfs/mnt/0
+      - /mnt/1:/rootfs/mnt/1
+      - /mnt/2:/rootfs/mnt/2
+      - /mnt/3:/rootfs/mnt/3
   loki:
     image: grafana/loki:2.7.1
     container_name: loki
