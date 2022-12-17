@@ -1,10 +1,10 @@
 version: "3.2"
-name: docker-media-watcher
+name: $COM_OBSIDIAN_HOST
 services:
   portainer:
     image: portainer/agent:latest
     labels:
-      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "portainer-agent"
     container_name: portainer_agent
     ports:
@@ -17,21 +17,26 @@ services:
     image: telegraf:latest
     container_name: telegraf
     labels:
-      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "telegraf"
     user: "telegraf:${DOCKER_GROUP}"
     group_add:
       - "${DOCKER_GROUP}"
       - "${PGID}"
-    hostname: docker-media-watcher
+    hostname: $COM_OBSIDIAN_HOST
     ports:
       - 57100:57100
       - 57500:57500
     environment:
+      COM_OBSIDIAN_HOST: "${COM_OBSIDIAN_HOST}"
+      COM_OBSIDIAN_SERVICE: "host"
       HOST_PROC: /rootfs/proc
       HOST_SYS: /rootfs/sys
       HOST_ETC: /rootfs/etc
       INFLUXDB_TELEGRAF_TOKEN: "${INFLUXDB_TELEGRAF_TOKEN}"
+      INFLUXDB_URL: "${INFLUXDB_URL}"
+      INFLUXDB_BUCKET: "telemetry"
+      INFLUXDB_ORG: "org"
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -42,7 +47,7 @@ services:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
     labels:
-      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "tautulli"
     environment:
       - PGID=${PGID}
@@ -56,13 +61,13 @@ services:
     image: esanchezm/prometheus-qbittorrent-exporter:latest
     container_name: qbittorrent_exporter
     labels:
-      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "qbittorrent-exporter"
     environment:
-      QBITTORRENT_PORT: 8080
-      QBITTORRENT_HOST: deluge
-      QBITTORRENT_USER: "admin"
-      QBITTORRENT_PASS: "adminadmin"
+      QBITTORRENT_PORT: $QBITTORRENT_PORT
+      QBITTORRENT_HOST: "${QBITTORRENT_HOST}"
+      QBITTORRENT_USER: "${QBITTORRENT_USER}"
+      QBITTORRENT_PASS: "${QBITTORRENT_PASS}"
       EXPORTER_PORT: 59571
     ports:
       - 59571:59571
@@ -70,12 +75,12 @@ services:
     image: ghcr.io/onedr0p/exportarr:latest
     container_name: sonarr_exporter
     labels:
-      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "sonarr-exporter"
     command: ["sonarr"]
     environment:
       PORT: 9707
-      URL: "http://sonarr:8989"
+      URL: "${EXPORTARR_URL_PREFIX}${SONARR_HOST}"
       APIKEY: "${SONARR_API_KEY}"
     ports:
       - 9707:9707
@@ -83,12 +88,12 @@ services:
     image: ghcr.io/onedr0p/exportarr:latest
     container_name: radarr_exporter
     labels:
-      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "radarr-exporter"
     command: ["radarr"]
     environment:
       PORT: 9708
-      URL: "http://radarr:7878"
+      URL: "${EXPORTARR_URL_PREFIX}${RADARR_HOST}"
       APIKEY: "${RADARR_API_KEY}"
     ports:
       - 9708:9708
@@ -96,12 +101,12 @@ services:
     image: ghcr.io/onedr0p/exportarr:latest
     container_name: lidarr_exporter
     labels:
-      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "lidarr-exporter"
     command: ["lidarr"]
     environment:
       PORT: 9709
-      URL: "http://docker-media:8686"
+      URL: "${EXPORTARR_URL_PREFIX}${LIDARR_HOST}"
       APIKEY: "${LIDARR_API_KEY}"
     ports:
       - 9709:9709
@@ -109,21 +114,47 @@ services:
     image: nwalke/tautulli_exporter:latest
     container_name: tautulli_exporter
     labels:
-      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "tautulli-exporter"
     environment:
+      TAUTULLI_URI: "${TAUTULLI_EXPORTER_URL_PREFIX}${TAUTULLI_HOST}"
       TAUTULLI_API_KEY: "${TAUTULLI_API_KEY}"
-      TAUTULLI_URI: "http://tautulli:8181"
     ports:
       - 9487:9487
   varken:
     image: boerderij/varken:develop
     container_name: varken
     labels:
-      com.obsidian.host: "docker-media-watcher"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "varken"
     group_add:
       - "${PGID}"
     volumes:
-      - ./varken/varken.ini:/config/varken.ini
       - /etc/localtime:/etc/localtime:ro
+      - /varken_config:/config
+    environment:
+      VRKN_GLOBAL_SONARR_SERVER_IDS: 1
+      VRKN_GLOBAL_RADARR_SERVER_IDS: 1
+      VRKN_GLOBAL_LIDARR_SERVER_IDS: 1
+      VRKN_GLOBAL_TAUTULLI_SERVER_IDS: 1
+      VRKN_GLOBAL_OMBI_SERVER_IDS: false
+      VRKN_GLOBAL_OVERSEERR_SERVER_IDS: false
+      VRKN_GLOBAL_SICKCHILL_SERVER_IDS: false
+      VRKN_GLOBAL_UNIFI_SERVER_IDS: false
+      VRKN_INFLUXDB_URL: "${INFLUXDB18_URL}"
+      VRKN_INFLUXDB_PORT: "${INFLUXDB18_PORT}"
+      VRKN_INFLUXDB_USERNAME: "admin"
+      VRKN_INFLUXDB_PASSWORD: "admin"
+      VRKN_SONARR_1_URL: "${SONARR_HOST}"
+      VRKN_SONARR_1_APIKEY: "${SONARR_API_KEY}"
+      VRKN_RADARR_1_URL: "${RADARR_HOST}"
+      VRKN_RADARR_1_APIKEY: "${RADARR_API_KEY}"
+      VRKN_LIDARR_1_URL: "${LIDARR_HOST}"
+      VRKN_LIDARR_1_APIKEY: "${LIDARR_API_KEY}"
+      VRKN_TAUTULLI_1_URL: "${TAUTULLI_HOST}"
+      VRKN_TAUTULLI_1_APIKEY: "${TAUTULLI_API_KEY}"
+    env_file:
+      - ./varken/.env
+volumes:
+  varken_config:
+
