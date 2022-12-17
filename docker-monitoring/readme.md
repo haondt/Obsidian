@@ -1,0 +1,1 @@
+Note: prometheus currently does not support env variables in the config (yml) file without editing the docker image to use an experimental feature flag. So, for now, urls in the config file must be updated manually.

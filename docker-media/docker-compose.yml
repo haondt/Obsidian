@@ -1,10 +1,10 @@
 version: "3.2"
-name: docker-media
+name: $COM_OBSIDIAN_HOST
 services:
   portainer:
     image: portainer/agent:latest
     labels:
-      com.obsidian.host: "docker-media"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "portainer-agent"
     container_name: portainer_agent
     ports:
@@ -16,21 +16,26 @@ services:
     image: telegraf:latest
     container_name: telegraf
     labels:
-      com.obsidian.host: "docker-media"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "telegraf"
     user: "telegraf:${DOCKER_GROUP}"
     group_add:
       - "${DOCKER_GROUP}"
       - "${PGID}"
-    hostname: docker-media
+    hostname: $COM_OBSIDIAN_HOST
     ports:
       - 57100:57100
       - 57500:57500
     environment:
+      COM_OBSIDIAN_HOST: "${COM_OBSIDIAN_HOST}"
+      COM_OBSIDIAN_SERVICE: "host"
       HOST_PROC: /rootfs/proc
       HOST_SYS: /rootfs/sys
       HOST_ETC: /rootfs/etc
       INFLUXDB_TELEGRAF_TOKEN: "${INFLUXDB_TELEGRAF_TOKEN}"
+      INFLUXDB_URL: "${INFLUXDB_URL}"
+      INFLUXDB_BUCKET: "telemetry"
+      INFLUXDB_ORG: "org"
     volumes:
       - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -41,7 +46,7 @@ services:
     image: grafana/promtail:2.7.1
     container_name: promtail
     labels:
-      com.obsidian.host: "docker-media"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "promtail"
     group_add:
       - "${DOCKER_GROUP}"
@@ -50,11 +55,14 @@ services:
       - ./promtail/promtail-config.yml:/etc/promtail/config.yml
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/containers:/var/lib/docker/containers
+    environment:
+      COM_OBSIDIAN_HOST: "${COM_OBSIDIAN_HOST}"
+      COM_OBSIDIAN_LOKI_URL: "${PROMTAIL_LOKI_URL}"
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest
     container_name: lidarr
     labels:
-      com.obsidian.host: "docker-media"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "lidarr"
     environment:
       - PGID=${PGID}
@@ -62,15 +70,15 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${DATA_DIR}/lidarr/config:/config
-      - ${VOLUME_1}:/mnt/0
-      - ${DOWNLOAD_DIR}:/RAID10Plex/transmission/completed
+      - ${LIDARR_VOLUME_1}:/mnt/0
+      - ${DOWNLOAD_HOST_DIR}:${DOWNLOAD_QBITTORRENT_DIR}
     ports:
       - 8686:8686
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
     labels:
-      com.obsidian.host: "docker-media"
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "prowlarr"
     environment:
       - PGID=${PGID}
