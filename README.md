@@ -5,7 +5,10 @@ Each of the following directories contain a `.env` file and a docker compose fil
 ```
 docker-media
 docker-monitoring
+docker-media-watcher
 ``` 
+
+Depending on the service, you may need to create a folder at `/home/docker/<service>`. Examine volume mounts in docker compose files to see.
 
 Find services available at the following:
 | Url | Service |
