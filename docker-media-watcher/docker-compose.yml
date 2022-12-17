@@ -1,5 +1,5 @@
 version: "3.2"
-name: $COM_OBSIDIAN_HOST
+name: docker-media-watcher
 services:
   portainer:
     image: portainer/agent:latest

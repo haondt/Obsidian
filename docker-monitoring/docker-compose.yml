@@ -1,5 +1,5 @@
 version: "3.2"
-name: $COM_OBSIDIAN_HOST
+name: docker-monitoring
 services:
   portainer:
     image: portainer/portainer-ce:latest
