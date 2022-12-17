@@ -91,6 +91,7 @@ services:
       HOST_PROC: /rootfs/proc
       HOST_SYS: /rootfs/sys
       HOST_ETC: /rootfs/etc
+      HOST_MOUNT_PREFIX: /rootfs
       INFLUXDB_TELEGRAF_TOKEN: "${INFLUXDB_TELEGRAF_TOKEN}"
       INFLUXDB_URL: "${INFLUXDB_URL}"
       INFLUXDB_BUCKET: "telemetry"
