@@ -1,0 +1,91 @@
+version: "3.2"
+name: docker-selfhosted
+services:
+  portainer:
+    image: portainer/agent:latest
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "portainer-agent"
+    container_name: portainer_agent
+    ports:
+      - 9001:9001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "telegraf"
+    user: "telegraf:${DOCKER_GROUP}"
+    group_add:
+      - "${DOCKER_GROUP}"
+      - "${PGID}"
+    hostname: $COM_OBSIDIAN_HOST
+    ports:
+      - 57100:57100
+      - 57500:57500
+    environment:
+      COM_OBSIDIAN_HOST: "${COM_OBSIDIAN_HOST}"
+      COM_OBSIDIAN_SERVICE: "host"
+      HOST_PROC: /rootfs/proc
+      HOST_SYS: /rootfs/sys
+      HOST_ETC: /rootfs/etc
+      INFLUXDB_TELEGRAF_TOKEN: "${INFLUXDB_TELEGRAF_TOKEN}"
+      INFLUXDB_URL: "${INFLUXDB_URL}"
+      INFLUXDB_BUCKET: "telemetry"
+      INFLUXDB_ORG: "org"
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/rootfs/sys:ro
+      - /proc:/rootfs/proc:ro
+      - /etc:/rootfs/etc:ro
+  firefly_iii:
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "firefly-iii"
+    image: fireflyiii/core:latest
+    container_name: firefly_iii
+    volumes:
+      - firefly_iii_upload:/var/www/html/storage/upload
+    env_file:
+      - ./firefly_iii/.env
+    ports:
+      - 8080:8080
+    depends_on:
+      - firefly_iii_db
+    environment:
+      SITE_OWNER: "${FIREFLY_III_SITE_OWNER}"
+  firefly_iii_db:
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "firefly-iii-db"
+    image: mariadb
+    container_name: firefly_iii_db
+    hostname: fireflyiiidb
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_USER=firefly
+      - MYSQL_PASSWORD=secret_firefly_password
+      - MYSQL_DATABASE=firefly
+    volumes:
+      - firefly_iii_db:/var/lib/mysql
+  firefly_iii_importer:
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "firefly-iii-importer"
+    image: fireflyiii/data-importer:latest
+    container_name: firefly_iii_importer
+    depends_on:
+      - firefly_iii
+    ports:
+      - 8081:8080
+    environment:
+      FIREFLY_III_URL: 'http://firefly_iii:8080'
+      FIREFLY_III_ACCESS_TOKEN: "${FIREFLY_III_ACCESS_TOKEN}"
+
+volumes:
+  firefly_iii_upload:
+  firefly_iii_db:
