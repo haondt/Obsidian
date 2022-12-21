@@ -18,3 +18,5 @@ Find services available at the following:
 | http://docker-monitoring:3000 | grafana |
 | http://docker-monitoring:8086 | influxdb |
 | http://docker-monitoring:9090 | prometheus |
+| http://docker-selfhosted:8080 | firefly-iii |
+| http://docker-selfhosted:8081 | firefly-iii data importer |
