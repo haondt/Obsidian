@@ -6,6 +6,7 @@ Each of the following directories contain a `.env` file and a docker compose fil
 docker-media
 docker-monitoring
 docker-media-watcher
+docker-selfhosted
 ```
 
 Find services available at the following:
