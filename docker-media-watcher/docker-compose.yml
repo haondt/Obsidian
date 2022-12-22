@@ -130,7 +130,7 @@ services:
       - "${PGID}"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /varken_config:/config
+      - varken_config:/config
     environment:
       VRKN_GLOBAL_SONARR_SERVER_IDS: 1
       VRKN_GLOBAL_RADARR_SERVER_IDS: 1
