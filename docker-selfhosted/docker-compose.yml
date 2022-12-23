@@ -85,7 +85,22 @@ services:
     environment:
       FIREFLY_III_URL: 'http://firefly_iii:8080'
       FIREFLY_III_ACCESS_TOKEN: "${FIREFLY_III_ACCESS_TOKEN}"
+  superslicer:
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "superslicer"
+    image: mikeah/superslicer-novnc
+    container_name: superslicer
+    volumes:
+      - superslicer_prints:/prints
+      - superslicer_configs:/configs
+    ports:
+      - 8282:8080
+    environment:
+      SSL_CERT_FILE: "/etc/ssl/certs/ca-certificates.crt"
 
 volumes:
+  superslicer_prints:
+  superslicer_configs:
   firefly_iii_upload:
   firefly_iii_db:
