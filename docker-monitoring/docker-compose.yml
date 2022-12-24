@@ -66,12 +66,14 @@ services:
     volumes:
       - ${DATA_DIR}/grafana/provisioning:/etc/grafana/provisioning
       - ${DATA_DIR}/grafana/storage:/var/lib/grafana
+      - ./grafana/grafana.ini:/etc/grafana/grafana.ini
     depends_on:
       - influxdb
       - influxdb18
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
+      - COM_OBSIDIAN_HOST=${COM_OBSIDIAN_HOST}
   telegraf:
     image: telegraf:latest
     container_name: telegraf
