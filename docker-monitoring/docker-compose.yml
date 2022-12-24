@@ -73,7 +73,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=admin
-      - COM_OBSIDIAN_HOST=${COM_OBSIDIAN_HOST}
+      - COM_OBSIDIAN_HOST_IP=${COM_OBSIDIAN_HOST_IP}
   telegraf:
     image: telegraf:latest
     container_name: telegraf
