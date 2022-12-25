@@ -72,6 +72,11 @@ services:
       - 59571:59571
   sonarr_exporter:
     image: ghcr.io/onedr0p/exportarr:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 2m
+        max_attempts: 60
     container_name: sonarr_exporter
     labels:
       com.obsidian.host: "${COM_OBSIDIAN_HOST}"
@@ -85,6 +90,11 @@ services:
       - 9707:9707
   radarr_exporter:
     image: ghcr.io/onedr0p/exportarr:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 2m
+        max_attempts: 60
     container_name: radarr_exporter
     labels:
       com.obsidian.host: "${COM_OBSIDIAN_HOST}"
@@ -98,6 +108,11 @@ services:
       - 9708:9708
   lidarr_exporter:
     image: ghcr.io/onedr0p/exportarr:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 2m
+        max_attempts: 60
     container_name: lidarr_exporter
     labels:
       com.obsidian.host: "${COM_OBSIDIAN_HOST}"
