@@ -1,0 +1,44 @@
+checks:
+  - varken:
+      source:
+        type: docker-hub
+        namespace: boerderij
+        repository: varken
+        tag: develop
+      destinations:
+        - type: discord
+          webhookURL: ${PYREMINDER_DISCORD_WEBHOOK_URL}
+          color: FEE4DF
+          template: "New version of `${docker_hub__image}` pushed ${docker_hub__last_updated}."
+      period: 1d
+  - Lidarr:
+      source:
+        type: github
+        owner: Lidarr
+        repo: Lidarr
+      destinations:
+        - type: discord
+          webhookURL: ${PYREMINDER_DISCORD_WEBHOOK_URL}
+          color: 00a65b
+          template: github-discord
+      period: 1d
+  - plex:
+      source:
+        type: docker-hub
+        namespace: linuxserver
+        repository: plex
+        tag: latest
+      destinations:
+        - type: discord
+          webhookURL: ${PYREMINDER_DISCORD_WEBHOOK_URL}
+          color: d5991e
+          template: "New version of Plex pushed ${docker_hub__last_updated}. Get it [here](${meta__plex_url})."
+      meta:
+        plex_url: "https://www.plex.tv/en-ca/media-server-downloads/"
+      period: 1d
+
+
+
+templates:
+  github-discord: |
+    Version ${github__tag} of ${check__name} has been released. Get it [here](${github__url}).

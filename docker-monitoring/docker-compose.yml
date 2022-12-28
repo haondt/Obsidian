@@ -133,3 +133,16 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - ${PROMETHEUS_DATA}:/prometheus
+  pyreminder:
+    image: haumea/pyreminder:latest
+    container_name: pyreminder
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "pyreminder"
+    group_add:
+      - "${PGID}"
+    volumes:
+      - ./pyreminder/pyreminder.yml:/config/pyreminder.yml
+      - ${DATA_DIR}/pyreminder:/data
+    env_file:
+      - ./pyreminder/.env
