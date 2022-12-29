@@ -106,6 +106,24 @@ services:
       APIKEY: "${RADARR_API_KEY}"
     ports:
       - 9708:9708
+  radarr_4k_exporter:
+    image: ghcr.io/onedr0p/exportarr:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 2m
+        max_attempts: 60
+    container_name: radarr_4k_exporter
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "radarr-4k-exporter"
+    command: ["radarr"]
+    environment:
+      PORT: 9710
+      URL: "${EXPORTARR_URL_PREFIX}${RADARR_4K_HOST}"
+      APIKEY: "${RADARR_4K_API_KEY}"
+    ports:
+      - 9710:9710
   lidarr_exporter:
     image: ghcr.io/onedr0p/exportarr:latest
     deploy:
@@ -148,7 +166,7 @@ services:
       - varken_config:/config
     environment:
       VRKN_GLOBAL_SONARR_SERVER_IDS: 1
-      VRKN_GLOBAL_RADARR_SERVER_IDS: 1
+      VRKN_GLOBAL_RADARR_SERVER_IDS: 1,2
       VRKN_GLOBAL_LIDARR_SERVER_IDS: 1
       VRKN_GLOBAL_TAUTULLI_SERVER_IDS: 1
       VRKN_GLOBAL_OMBI_SERVER_IDS: false
@@ -163,6 +181,8 @@ services:
       VRKN_SONARR_1_APIKEY: "${SONARR_API_KEY}"
       VRKN_RADARR_1_URL: "${RADARR_HOST}"
       VRKN_RADARR_1_APIKEY: "${RADARR_API_KEY}"
+      VRKN_RADARR_2_URL: "${RADARR_4K_HOST}"
+      VRKN_RADARR_2_APIKEY: "${RADARR_4K_API_KEY}"
       VRKN_LIDARR_1_URL: "${LIDARR_HOST}"
       VRKN_LIDARR_1_APIKEY: "${LIDARR_API_KEY}"
       VRKN_TAUTULLI_1_URL: "${TAUTULLI_HOST}"
