@@ -13,6 +13,7 @@ Find services available at the following:
 | Url | Service |
 |---|---|
 | http://docker-media:8686 | lidarr |
+| http://docker-media:7878 | radarr (for 4k movies) |
 | http://docker-media:9696 | prowlarr |
 | http://docker-media-watcher:8181 | tautulli |
 | http://docker-monitoring:9000 | portainer |
