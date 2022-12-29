@@ -70,10 +70,26 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${DATA_DIR}/lidarr/config:/config
-      - ${LIDARR_VOLUME_1}:/mnt/0
+      - ${LIDARR_VOLUME_1}:/music
       - ${DOWNLOAD_HOST_DIR}:${DOWNLOAD_QBITTORRENT_DIR}
     ports:
       - 8686:8686
+  radarr_4k:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr_4k
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "radarr-4k"
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DATA_DIR}/radarr/config:/config
+      - ${RADARR_4K_VOLUME_1}:/movies
+      - ${DOWNLOAD_HOST_DIR}:${DOWNLOAD_QBITTORRENT_DIR}
+    ports:
+      - 7878:7878
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
