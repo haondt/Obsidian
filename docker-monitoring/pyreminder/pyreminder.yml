@@ -43,7 +43,7 @@ checks:
       destinations:
         - type: discord
           webhookURL: ${PYREMINDER_DISCORD_WEBHOOK_URL}
-          color: e0ab2a
+          color: 1d819f
           template: "Version $apt__version of Sonarr has been released."
       period: 1d
   - Bazarr:
