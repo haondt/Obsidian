@@ -104,3 +104,22 @@ services:
       - ${DATA_DIR}/prowlarr/config:/config
     ports:
       - 9696:9696
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "bazarr"
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DATA_DIR}/bazarr/config:/config
+      - ${SONARR_VOLUME_1}:/mnt/tv_shows1
+      - ${SONARR_VOLUME_2}:/mnt/tv_show2
+      - ${RADARR_VOLUME_1}:/mnt/movies1
+      - ${RADARR_VOLUME_2}:/mnt/movies2
+      - ${RADARR_4K_VOLUME_1}:/mnt/movies3
+    ports:
+      - 6767:6767
