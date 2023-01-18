@@ -120,6 +120,20 @@ services:
       - ${SONARR_VOLUME_2}:/mnt/tv_show2
       - ${RADARR_VOLUME_1}:/mnt/movies1
       - ${RADARR_VOLUME_2}:/mnt/movies2
-      - ${RADARR_4K_VOLUME_1}:/mnt/movies3
     ports:
       - 6767:6767
+  bazarr_4k:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr_4k
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "bazarr-4k"
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${DATA_DIR}/bazarr_4k/config:/config
+      - ${RADARR_4K_VOLUME_1}:/mnt/movies1
+    ports:
+      - 6768:6767
