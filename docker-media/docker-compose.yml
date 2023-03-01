@@ -137,3 +137,32 @@ services:
       - ${RADARR_4K_VOLUME_1}:/mnt/movies1
     ports:
       - 6768:6767
+  plex_meta_manager:
+    image: meisnate12/plex-meta-manager:latest
+    command: ['--run']
+    container_name: plex_meta_manager
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "plex-meta-manager"
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
+    volumes:
+      - ${DATA_DIR}/plex_meta_manager/config:/config:rw
+    depends_on:
+      pmm_bootstrap:
+        condition: service_completed_successfully
+  pmm_bootstrap:
+    container_name: pmm_bootstrap
+    image: python:3.11.1-alpine
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "pmm-bootstrap"
+    entrypoint: ['python3', '-u', '/data/bootstrap.py']
+    volumes:
+      - ./plex_meta_manager/bootstrap.py:/data/bootstrap.py
+      - ./plex_meta_manager/config.yml:/data/input
+      - ${DATA_DIR}/plex_meta_manager/config/config.yml:/data/output
+    env_file:
+      - ./plex_meta_manager/.env
+
