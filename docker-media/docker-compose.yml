@@ -139,7 +139,7 @@ services:
       - 6768:6767
   plex_meta_manager:
     image: meisnate12/plex-meta-manager:latest
-    command: ['--run']
+    #command: ['--run']
     container_name: plex_meta_manager
     labels:
       com.obsidian.host: "${COM_OBSIDIAN_HOST}"
@@ -149,6 +149,7 @@ services:
       - PUID=${PUID}
     volumes:
       - ${DATA_DIR}/plex_meta_manager/config:/config:rw
+      - ./plex_meta_manager/TVShows.yml:/config/TVShows.yml
     depends_on:
       pmm_bootstrap:
         condition: service_completed_successfully
@@ -159,6 +160,9 @@ services:
       com.obsidian.host: "${COM_OBSIDIAN_HOST}"
       com.obsidian.service: "pmm-bootstrap"
     entrypoint: ['python3', '-u', '/data/bootstrap.py']
+    environment:
+      - PGID=${PGID}
+      - PUID=${PUID}
     volumes:
       - ./plex_meta_manager/bootstrap.py:/data/bootstrap.py
       - ./plex_meta_manager/config.yml:/data/input

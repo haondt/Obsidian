@@ -1,13 +1,77 @@
 libraries:                       # This is called out once within the config.yml file
   Movies 4K:                        # These are names of libraries in your Plex
+    template_variables:
+      use_separator: false
     metadata_path:
+      - pmm: universe
+      - pmm: studio_anime
+      - pmm: streaming
+      - pmm: seasonal
+      - pmm: decade
+      - pmm: franchise
       - pmm: basic               # This is a file within PMM's defaults folder
       - pmm: imdb                # This is a file within PMM's defaults folder
+        template_variables:
+          use_top: false
+          use_lowest: false
       # see the wiki for how to use local files, folders, URLs, or files from git
     overlay_path:
-      - remove_overlays: false   # Set this to true to remove all overlays
-      - pmm: ribbon              # This is a file within PMM's defaults folder
-      # see the wiki for how to use local files, folders, URLs, or files from git
+      - remove_overlays: true   # Set this to true to remove all overlays
+    operations:
+      delete_collections:
+        managed: true
+        configured: false
+  TV Shows:                        # These are names of libraries in your Plex
+    template_variables:
+      use_separator: false
+    metadata_path:
+      - pmm: trakt
+        template_variables:
+          use_collected: false
+          use_popular: false
+          use_recommended: false
+          use_watched: false
+          visible_home: true
+          visible_shared: true
+      - pmm: studio_anime
+      - pmm: streaming
+      - pmm: decade
+      - pmm: franchise
+      - pmm: basic
+      - file: config/TVShows.yml
+    overlay_path:
+      - remove_overlays: true   # Set this to true to remove all overlays
+    operations:
+      delete_collections:
+        managed: true
+        configured: false
+  Movies:                        # These are names of libraries in your Plex
+    template_variables:
+      use_separator: false
+    metadata_path:
+      - pmm: tmdb
+        template_variables:
+          use_popular: false
+          use_top: false
+          use_air: false
+          visible_home: true
+          visible_shared: true
+      - pmm: universe
+      - pmm: studio_anime
+      - pmm: streaming
+      - pmm: seasonal
+        template_variables:
+          visible_home: true
+          visible_shared: true
+      - pmm: decade
+      - pmm: franchise
+      - pmm: basic
+    overlay_path:
+      - remove_overlays: true   # Set this to true to remove all overlays
+    operations:
+      delete_collections:
+        managed: true
+        configured: false
 playlist_files:
   - pmm: playlist                # This is a file within PMM's defaults folder
   # see the wiki for how to use local files, folders, URLs, or files from git
@@ -24,7 +88,7 @@ settings:
   show_missing_season_assets: false
   show_missing_episode_assets: false
   show_asset_not_needed: true
-  sync_mode: append
+  sync_mode: sync
   minimum_items: 1
   default_collection_order:
   delete_below_minimum: true
@@ -35,7 +99,7 @@ settings:
   show_unmanaged: true
   show_filtered: false
   show_options: false
-  show_missing: true
+  show_missing: false
   show_missing_assets: true
   save_report: false
   tvdb_language: eng
@@ -49,11 +113,11 @@ settings:
   custom_repo:
   check_nightly: false
 webhooks:                        # Can be individually specified per library as well
-  error:
+  error: ${PMM_WEBHOOK_ERROR}
   version:
-  run_start:
-  run_end:
-  changes:
+  run_start: ${PMM_WEBHOOK_INFO}
+  run_end: ${PMM_WEBHOOK_INFO}
+  changes: ${PMM_WEBHOOK_INFO}
 plex:                            # Can be individually specified per library as well; REQUIRED for the script to run
   url: http://${PMM_PLEX_URL}:32400
   token: ${PMM_PLEX_TOKEN}
@@ -64,53 +128,10 @@ plex:                            # Can be individually specified per library as 
 tmdb:                            # REQUIRED for the script to run
   apikey: ${PMM_TMDB_APIKEY}
   language: en
-tautulli:                        # Can be individually specified per library as well
-  url: http://192.168.1.12:8181
-  apikey: ################################
-omdb:
-  apikey: ########
-  cache_expiration: 60
-mdblist:
-  apikey: #########################
-  cache_expiration: 60
-notifiarr:
-  apikey: ####################################
-anidb:                           # Not required for AniDB builders unless you want mature content
-  username: ######
-  password: ######
-radarr:                          # Can be individually specified per library as well
-  url: http://192.168.1.12:7878
-  token: ################################
-  add_missing: false
-  add_existing: false
-  root_folder_path: S:/Movies
-  monitor: true
-  availability: announced
-  quality_profile: HD-1080p
-  tag:
-  search: false
-  radarr_path:
-  plex_path:
-sonarr:                          # Can be individually specified per library as well
-  url: http://192.168.1.12:8989
-  token: ################################
-  add_missing: false
-  add_existing: false
-  root_folder_path: "S:/TV Shows"
-  monitor: all
-  quality_profile: HD-1080p
-  language_profile: English
-  series_type: standard
-  season_folder: true
-  tag:
-  search: false
-  cutoff_search: false
-  sonarr_path:
-  plex_path:
 trakt:
-  client_id: ####################
-  client_secret: ####################
-  pin:
+  client_id: ${PMM_TRAKT_ID}
+  client_secret: ${PMM_TRAKT_SECRET}
+  pin: ${PMM_TRAKT_PIN}
   authorization:
     # everything below is autofilled by the script
     access_token:
@@ -119,12 +140,10 @@ trakt:
     refresh_token:
     scope: public
     created_at:
-mal:
-  client_id: ####################
-  client_secret: ####################
-  authorization:
-    # everything below is autofilled by the script
-    access_token:
-    token_type:
-    expires_in:
-    refresh_token:
+anidb:
+  username:
+  password:
+  client: ${PMM_ANIDB_CLIENT}
+  version: 1
+  language: en
+  cache_expiration: 60

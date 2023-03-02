@@ -1,0 +1,30 @@
+collections:
+  Isekai Anime:
+    anidb_tag:
+      tag: 6744
+      limit:
+    sync_mode: sync
+  Marvel Cinematic Universe:
+    tvdb_list: https://thetvdb.com/lists/marvel-cinematic-universe
+    collection_order: custom
+    sync_mode: sync
+  Futurama Top 100 Episodes:
+    collection_order: custom
+    collection_level: episode
+    sync_mode: sync
+    imdb_list:
+      url: https://www.imdb.com/search/title/?series=tt0149460&sort=user_rating,desc
+      limit: 100
+    sort_title: "*111"
+    summary: The top 100 Futurama episodes by IMDb user rating
+  Fast Laughs:
+    imdb_list:
+      url: https://www.imdb.com/search/title/?title_type=tv_series,tv_episode,tv_short&genres=comedy&runtime=10,30
+      limit: 100
+    collection_order: custom
+    sync_mode: sync
+    visible_home: true
+    visible_shared: true
+    summary: IMDbs top 100 comedies under 30 minutes
+
+
