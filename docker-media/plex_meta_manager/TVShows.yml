@@ -2,11 +2,43 @@ collections:
   Isekai Anime:
     anidb_tag:
       tag: 6744
-      limit:
+      limit: 300
+    visible_library: true
+    sync_mode: sync
+  Demon Anime:
+    anidb_tag:
+      tag: 2646
+      limit: 2000
+    visible_library: true
+    sync_mode: sync
+  Post-Apocalyptic Anime:
+    anidb_tag:
+      tag: 2923
+      limit: 400
+    visible_library: true
+    sync_mode: sync
+  Time Travel Anime:
+    anidb_tag:
+      tag: 2637
+      limit: 500
+    visible_library: true
+    sync_mode: sync
+  Romance Anime:
+    anidb_tag:
+      tag: 2858
+      limit: 3000
+    visible_library: true
+    sync_mode: sync
+  Slice of Life Anime:
+    anidb_tag:
+      tag: 2864
+      limit: 1500
+    visible_library: true
     sync_mode: sync
   Marvel Cinematic Universe:
     tvdb_list: https://thetvdb.com/lists/marvel-cinematic-universe
     collection_order: custom
+    visible_library: true
     sync_mode: sync
   Futurama Top 100 Episodes:
     collection_order: custom
@@ -16,6 +48,7 @@ collections:
       url: https://www.imdb.com/search/title/?series=tt0149460&sort=user_rating,desc
       limit: 100
     sort_title: "*111"
+    visible_library: true
     summary: The top 100 Futurama episodes by IMDb user rating
   Fast Laughs:
     imdb_list:
@@ -24,6 +57,7 @@ collections:
     collection_order: custom
     sync_mode: sync
     visible_home: true
+    visible_library: true
     visible_shared: true
     summary: IMDbs top 100 comedies under 30 minutes
 
