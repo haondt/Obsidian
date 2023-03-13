@@ -1,0 +1,10 @@
+all:
+  hosts:
+  children:
+    proxmox:
+      hosts:
+        pve:
+    docker_hosts:
+      hosts:
+        docker-monitoring:
+        docker-media:

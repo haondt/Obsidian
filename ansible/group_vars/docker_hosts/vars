@@ -1,0 +1,4 @@
+---
+ansible_connection: ssh
+ansible_password: "{{ vault_ansible_password }}"
+ansible_user: docker
