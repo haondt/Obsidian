@@ -1,0 +1,97 @@
+version: '3'
+
+services:
+  portainer:
+    image: portainer/agent:latest
+    container_name: portainer_agent
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "portainer-agent"
+    ports:
+      - 9001:9001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+  telegraf:
+    image: telegraf:latest
+    container_name: telegraf
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "telegraf"
+    user: "telegraf:${DOCKER_GROUP}"
+    group_add:
+      - "${DOCKER_GROUP}"
+      - "${PGID}"
+    hostname: $COM_OBSIDIAN_HOST
+    ports:
+      - 57100:57100
+      - 57500:57500
+    environment:
+      COM_OBSIDIAN_HOST: "${COM_OBSIDIAN_HOST}"
+      COM_OBSIDIAN_SERVICE: "host"
+      HOST_PROC: /rootfs/proc
+      HOST_SYS: /rootfs/sys
+      HOST_ETC: /rootfs/etc
+      INFLUXDB_TELEGRAF_TOKEN: "${INFLUXDB_TELEGRAF_TOKEN}"
+      INFLUXDB_URL: "${INFLUXDB_URL}"
+      INFLUXDB_BUCKET: "telemetry"
+      INFLUXDB_ORG: "org"
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /sys:/rootfs/sys:ro
+      - /proc:/rootfs/proc:ro
+      - /etc:/rootfs/etc:ro
+  rundeck:
+    build:
+      context: ./ansible
+    container_name: rundeck
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "rundeck"
+    hostname: rundeck
+    group_add:
+      - "${PGID}"
+    links:
+      - mariadb
+    depends_on:
+      - mariadb
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    environment:
+      RUNDECK_DATABASE_USERNAME: rundeck
+      RUNDECK_DATABASE_PASSWORD: password
+      RUNDECK_DATABASE_DRIVER: org.mariadb.jdbc.Driver
+      RUNDECK_DATABASE_URL: jdbc:mysql://mariadb/rundeck?autoReconnect=true&useSSL=false
+      RUNDECK_GRAILS_URL: "http://docker-automation:4440"
+    ports:
+      - 4440:4440
+      - 8080:8080
+    volumes:
+      - ./ansible:/home/rundeck/ansible
+      - ./ansible/ansible.cfg:/home/rundeck/.ansible.cfg
+    networks:
+      - db-net
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "rundeck-db"
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=yes
+      - MYSQL_USER=rundeck
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=rundeck
+    volumes:
+      - mariadb-data:/var/lib/mysql
+    networks:
+      - db-net
+volumes:
+  mariadb-data:
+  ansible-data:
+networks:
+  db-net:
+
