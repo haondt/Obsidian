@@ -12,3 +12,7 @@ Some ansible commands:
   ```bash
   ansible-inventory -i inventory.yml --list
   ```
+- Run a playbook
+  ```shell
+  ansible-playbook playbook.yml
+  ```

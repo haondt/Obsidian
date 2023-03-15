@@ -8,3 +8,6 @@ all:
       hosts:
         docker-monitoring:
         docker-media:
+    lxc:
+      hosts:
+        plex:

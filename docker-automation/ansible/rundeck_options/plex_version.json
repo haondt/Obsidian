@@ -1,0 +1,8 @@
+[
+  "Ubuntu (16.04+) / Debian (8+) - Intel/AMD 64-bit",
+  "Ubuntu (16.04+) / Debian (8+) - Intel/AMD 32-bit",
+  "Ubuntu (16.04+) / Debian (8+) - ARMv8",
+  "Ubuntu (16.04+) / Debian (8+) - ARMv7",
+  "Fedora (27+) / CentOS (7+) / SUSE (15+) - Intel/AMD 64-bit",
+  "Fedora (27+) / CentOS (7+) / SUSE (15+) - Intel/AMD 32-bit"
+]

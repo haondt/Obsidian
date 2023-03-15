@@ -1,0 +1,60 @@
+---
+- name: Update Plex
+  hosts: plex
+  become: true
+  become_user: ansible
+  vars:
+    plex_releases_url: https://plex.tv/api/downloads/5.json
+  tasks:
+    - name: Get releases json
+      ansible.builtin.uri:
+        url: "{{ plex_releases_url }}"
+        method: GET
+        status_code: 200
+      register: plex_json
+    - name: Extract latest version
+      ansible.builtin.set_fact:
+        latest_release: "{{ plex_json.json.computer['Linux'].version.split('-')[0] }}"
+    - name: Get current version
+      ansible.builtin.shell: dpkg --list | grep plexmediaserver | awk 'NR==1{print $3}' | sed 's/-.*//'
+      register: plex_version
+    - name: Extract current version
+      ansible.builtin.set_fact:
+        current_release: "{{ plex_version.stdout }}"
+    - name: Check if update required
+      ansible.builtin.assert:
+        that:
+          - latest_release > current_release
+        fail_msg: "Already up to date. Version: {{ current_release }}"
+        success_msg: "Update required. Current version: {{ current_release }}, latest version: {{ latest_release }}"
+    - block:
+      - name: Get url for distribution
+        ansible.builtin.set_fact:
+          plex_release: "{{ plex_json.json.computer.Linux.releases | selectattr('label', 'equalto', vars['option_plex_version']) | first }}"
+      rescue:
+        - name: Log Failure
+          ansible.builtin.debug:
+            msg: "Unable to find release '{{ option_plex_version }}'"
+        - name: Fail playbook
+          fail:
+    - name: Download latest
+      ansible.builtin.get_url:
+        url: "{{ plex_release.url }}"
+        checksum: "sha1:{{ plex_release.checksum }}"
+        dest: /tmp
+      register: plex_download
+    - name: Assert download success
+      ansible.builtin.assert:
+        that:
+          - plex_download.failed == false
+        fail_msg: "Failed while downloading file"
+    - name: Install latest plex package
+      block: 
+      - name: Install latest
+        become_user: root
+        ansible.builtin.command: "dpkg -i {{ plex_download.dest }}"
+      always:
+      - name: Remove downloaded plex package from tmp
+        file:
+          path: "{{ plex_download.dest }}"
+          state: absent
