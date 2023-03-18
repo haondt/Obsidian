@@ -1,4 +1,4 @@
 ---
 ansible_connection: ssh
-ansible_password: "{{ vault_ansible_password }}"
+ansible_password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/foo') }}"
 ansible_user: root
