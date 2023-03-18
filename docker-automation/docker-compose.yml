@@ -43,7 +43,8 @@ services:
       - /proc:/rootfs/proc:ro
       - /etc:/rootfs/etc:ro
   gitlab_runner:
-    image: gitlab/gitlab-runner:latest
+    build:
+      context: ./gitlab_runner
     container_name: gitlab_runner
     labels:
       com.obsidian.host: "${COM_OBSIDIAN_HOST}"
