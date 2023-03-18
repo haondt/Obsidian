@@ -1,0 +1,17 @@
+concurrent = 1
+check_interval = 0
+shutdown_timeout = 0
+
+[session_server]
+  session_timeout = 1800
+
+[[runners]]
+  name = "obsidian-runner"
+  url = "https://gitlab.com/"
+  id = 21957522
+  token = "INSERT_TOKEN_HERE""
+  token_obtained_at = 2023-03-18T13:46:48Z
+  token_expires_at = 0001-01-01T00:00:00Z
+  executor = "shell"
+  [runners.cache]
+    MaxUploadedArchiveSize = 0

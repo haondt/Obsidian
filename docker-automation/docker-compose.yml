@@ -42,56 +42,19 @@ services:
       - /sys:/rootfs/sys:ro
       - /proc:/rootfs/proc:ro
       - /etc:/rootfs/etc:ro
-  rundeck:
-    build:
-      context: ./ansible
-    container_name: rundeck
+  gitlab_runner:
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab_runner
     labels:
       com.obsidian.host: "${COM_OBSIDIAN_HOST}"
-      com.obsidian.service: "rundeck"
-    hostname: rundeck
+      com.obsidian.service: "gitlab-runner"
     group_add:
       - "${PGID}"
-    links:
-      - mariadb
-    depends_on:
-      - mariadb
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-    environment:
-      RUNDECK_DATABASE_USERNAME: rundeck
-      RUNDECK_DATABASE_PASSWORD: password
-      RUNDECK_DATABASE_DRIVER: org.mariadb.jdbc.Driver
-      RUNDECK_DATABASE_URL: jdbc:mysql://mariadb/rundeck?autoReconnect=true&useSSL=false
-      RUNDECK_GRAILS_URL: "http://docker-automation:4440"
-    ports:
-      - 4440:4440
-      - 8080:8080
     volumes:
-      - ./ansible:/home/rundeck/ansible
-      - ./ansible/ansible.cfg:/home/rundeck/.ansible.cfg
-    networks:
-      - db-net
-  mariadb:
-    image: mariadb
-    container_name: mariadb
-    labels:
-      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
-      com.obsidian.service: "rundeck-db"
-    environment:
-      - MYSQL_RANDOM_ROOT_PASSWORD=yes
-      - MYSQL_USER=rundeck
-      - MYSQL_PASSWORD=password
-      - MYSQL_DATABASE=rundeck
-    volumes:
-      - mariadb-data:/var/lib/mysql
-    networks:
-      - db-net
+      - gitlab-runner-data:/etc/gitlab-runner/
+      - ./gitlab_runner/config.toml:/etc/gitlab-runner/config.toml
 volumes:
-  mariadb-data:
-  ansible-data:
+  gitlab-runner-data:
 networks:
   db-net:
 
