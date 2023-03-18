@@ -98,8 +98,19 @@ services:
       - 8282:8080
     environment:
       SSL_CERT_FILE: "/etc/ssl/certs/ca-certificates.crt"
-
+  pykvp:
+    labels:
+      com.obsidian.host: "${COM_OBSIDIAN_HOST}"
+      com.obsidian.service: "pykvs"
+    build:
+      context: ./pykvs
+    container_name: pykvs
+    ports:
+      - 8188:8188
+    volumes:
+      - pykvs_data:/data
 volumes:
+  pykvs_data:
   superslicer_prints:
   superslicer_configs:
   firefly_iii_upload:
