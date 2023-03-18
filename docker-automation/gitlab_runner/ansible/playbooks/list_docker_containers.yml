@@ -1,0 +1,24 @@
+---
+- hosts: docker_hosts
+  become: true
+  become_user: root
+  tasks:
+    - name: List Docker Containers
+      shell: docker ps --format '{{ "{{" }}.Names{{ "}}" }}'
+      register: containers
+    - name: Copy output to file
+      become: false
+      copy:
+        dest: containers.json
+        content: |-
+          {
+          {% for host in ansible_play_hosts_all %}
+            "{{ host }}": [
+              {% for ctr in hostvars[host]['containers']['stdout'].split('\n') %}
+                "{{ ctr }}"{{ "," if not loop.last else "" }}
+              {% endfor %}
+            ]{{ "," if not loop.last else "" }}
+          {% endfor %}
+          }
+      delegate_to: localhost
+      run_once: true
