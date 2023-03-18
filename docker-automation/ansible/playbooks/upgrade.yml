@@ -1,9 +1,21 @@
 ---
-- hosts: docker_hosts
+- hosts: debian, ubuntu
   become: true
-  become_user: docker
+  become_user: root
   tasks:
-    - name: update apt-get repo and cache
-      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
-    - name: upgrade all apt packages
-      apt: upgrade=dist force_apt_get=yes
+    - name: foo
+      debug:
+        msg: "{{ vars['group_names'] }}"
+    - name: foo2
+      debug:
+        msg: "{{ vars['ansible_nodename'] }}"
+    - block:
+      - name: Shutting down docker
+        debug:
+          msg: "yessir"
+      when: "{{ 'docker_hosts' in vars.group_names }}"
+
+    #- name: update apt-get repo and cache
+      #apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    #- name: upgrade all apt packages
+      #apt: upgrade=dist force_apt_get=yes

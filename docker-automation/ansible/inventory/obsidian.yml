@@ -11,3 +11,11 @@ all:
     lxc:
       hosts:
         plex:
+
+    debian:
+      hosts:
+        docker-monitoring:
+        docker-media:
+    ubuntu:
+      hosts:
+        plex:

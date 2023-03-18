@@ -21,12 +21,16 @@
     - name: Extract current version
       ansible.builtin.set_fact:
         current_release: "{{ plex_version.stdout }}"
-    - name: Check if update required
-      ansible.builtin.assert:
-        that:
-          - latest_release > current_release
-        fail_msg: "Already up to date. Version: {{ current_release }}"
-        success_msg: "Update required. Current version: {{ current_release }}, latest version: {{ latest_release }}"
+    - block:
+      - name: Check if update required
+        debug:
+          msg: "Already up to date. Version: {{ current_release }}"
+      - meta: end_play
+
+      when:  latest_release <= current_release
+    - name: Log upgrade required
+      debug:
+        msg: "Update required. Current version: {{ current_release }}, latest version: {{ latest_release }}"
     - block:
       - name: Get url for distribution
         ansible.builtin.set_fact:

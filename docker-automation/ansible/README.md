@@ -16,3 +16,7 @@ Some ansible commands:
   ```shell
   ansible-playbook playbook.yml
   ```
+- See which hosts are compatible with a playbook
+  ```shell
+  ansible-playbook playbook.yml
+  ```
