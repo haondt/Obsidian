@@ -1,5 +1,5 @@
 ---
 ansible_connection: ssh
-ansible_password: "{{ vault_ansible_password }}"
+ansible_password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__inventory.group_vars.docker_hosts.password') }}"
 ansible_user: docker
-ansible_become_pass: "{{ vault_ansible_password }}"
+ansible_become_pass: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__inventory.group_vars.docker_hosts.password') }}"
