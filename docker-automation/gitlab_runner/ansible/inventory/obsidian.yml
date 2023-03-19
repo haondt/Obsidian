@@ -8,6 +8,9 @@ all:
       hosts:
         docker-monitoring:
         docker-media:
+        docker-media-watcher:
+        docker-selfhosted:
+        docker-automation:
     lxc:
       hosts:
         plex:
@@ -16,6 +19,9 @@ all:
       hosts:
         docker-monitoring:
         docker-media:
+        docker-media-watcher:
+        docker-selfhosted:
+        docker-automation:
     ubuntu:
       hosts:
         plex:
