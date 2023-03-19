@@ -1,0 +1,15 @@
+---
+- hosts: docker_hosts
+  become: true
+  become_user: root
+  tasks:
+    - name: pull image
+      shell: docker compose pull "{{ container_name }}" -q
+      args:
+        chdir: "/home/docker/Obsidian/{{ inventory_hostname }}/"
+    - name: recreate container
+      shell: docker compose up -d --force-recreate --build "{{ container_name }}"
+      args:
+        chdir: "/home/docker/Obsidian/{{ inventory_hostname }}/"
+    - name: prune unused images
+      shell: docker image prune -af

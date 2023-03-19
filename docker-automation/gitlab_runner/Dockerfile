@@ -9,11 +9,9 @@ RUN apt-get update -y && \
 	sudo \
 	wget \
 	curl \
-	sshpass 
+	sshpass
 
 RUN apt-get clean
 
 RUN pip install --upgrade pip
 RUN pip install ansible-core
-
-
