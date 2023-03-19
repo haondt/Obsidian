@@ -9,7 +9,7 @@
     - name: Copy output to file
       become: false
       copy:
-        dest: containers.json
+        dest: ../containers.json
         content: |-
           {
           {% for host in ansible_play_hosts_all %}
