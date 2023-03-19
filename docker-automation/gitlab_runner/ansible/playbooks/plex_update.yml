@@ -26,7 +26,6 @@
         debug:
           msg: "Already up to date. Version: {{ current_release }}"
       - meta: end_play
-
       when:  latest_release <= current_release
     - name: Log upgrade required
       debug:
@@ -53,7 +52,7 @@
           - plex_download.failed == false
         fail_msg: "Failed while downloading file"
     - name: Install latest plex package
-      block: 
+      block:
       - name: Install latest
         become_user: root
         ansible.builtin.command: "dpkg -i {{ plex_download.dest }}"
