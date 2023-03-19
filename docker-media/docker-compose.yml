@@ -1,7 +1,7 @@
 version: "3.2"
 name: docker-media
 services:
-  portainer:
+  portainer_agent:
     image: portainer/agent:latest
     labels:
       com.obsidian.host: "${COM_OBSIDIAN_HOST}"
