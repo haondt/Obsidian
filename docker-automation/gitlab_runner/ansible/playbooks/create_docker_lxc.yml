@@ -1,7 +1,6 @@
 # requires proxomoxer (python package) to be installed on proxmox host
 # requires variables
 #   - container_suffix
-#   - container_gid
 ---
 - name: Create Docker LXC
   hosts: pve

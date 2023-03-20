@@ -1,6 +1,6 @@
+
 # requires variables
 #   - container_suffix
-#   - container_hostname
 #   - container_id
 #   - container_ip
 #   - container_gid
@@ -11,18 +11,124 @@
   tasks:
     - name: Add host
       add_host:
-        name: "{{ container_hostname }}"
+        name: "docker-{{ container_suffix }}"
         groups: "docker_hosts"
         ansible_ssh_host: "{{ container_ip }}"
 
-- name: Set up Docker LXC
-  hosts: "{{ container_hostname }}"
+- name: Set up Docker LXC (system)
+  hosts: "docker-{{ container_suffix }}"
   become: true
   become_user: root
   tasks:
-    - name: get container ip address
-      shell: "ip addr | grep -oE '192\\.[0-9.]+' -m 1 | head -1"
-      register: ip
-    - name: log ip
-      debug:
-        msg: "{{ ip.stdout }}"
+    - name: update apt-get repo and cache
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+    - name: upgrade all apt packages
+      apt: upgrade=dist force_apt_get=yes
+    - name: check if reboot required
+      register: reboot_required_file
+      stat: path=/var/run/reboot-required get_md5=no
+    - name: reboot if kernel updated
+      reboot:
+        msg: "Reboot initiated by Ansible for kernel updates"
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime
+      when: reboot_required_file.stat.exists
+
+    - name: Disable ipv6
+      shell: |-
+        echo "
+        net.ipv6.conf.all.disable_ipv6 = 1
+        net.ipv6.conf.default.disable_ipv6 = 1
+        net.ipv6.conf.lo.disable_ipv6 = 1
+        net.ipv6.conf.tun0.disable_ipv6 = 1
+        " >> /etc/sysctl.conf
+    - name: "create group {{ container_suffix }}"
+      group:
+        name: "{{ container_suffix }}"
+        state: present
+        gid: "{{ container_gid }}"
+    - name: "add docker to {{ container_suffix }}"
+      user:
+        name: docker
+        groups: "{{ container_suffix }}"
+        append: yes
+    - name: install packages
+      apt:
+        pkg:
+          - vim
+          - resolvconf
+          - git
+          - tmux
+    - name: reboot to apply network changes
+      reboot:
+        msg: "Reboot initiated by Ansible for network changes"
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime
+
+- name: Set up Docker LXC (data)
+  hosts: "docker-{{ container_suffix }}"
+  become: true
+  become_user: docker
+  tasks:
+    - name: create directory for ssh keys
+      file:
+        path: /home/docker/.ssh
+        owner: docker
+        group: docker
+        state: directory
+    - name: generate ssh key
+      community.crypto.openssh_keypair:
+        path: /home/docker/.ssh/id_ed25519
+        type: ed25519
+        comment: "burghardtnoah@gmail.com"
+    - name: add ssh key pair
+      shell: |-
+        eval "$(ssh-agent -s)"
+        ssh-add /home/docker/.ssh/id_ed25519
+    - name: get ssh public key
+      shell: cat /home/docker/.ssh/id_ed25519.pub
+      register: key_shell
+    - name: save ssh public key
+      set_fact:
+        pub_key: "{{ key_shell.stdout }}"
+    - name: configure git
+      shell: |
+        git config --global user.email burghardtnoah@gmail.com
+        git config --global user.name Noah
+        git config --global core.filemode false
+    - name: get mac address
+      shell: ip -0 -br link | grep eth0 | awk '{print $3}'
+      register: maddr_shell
+    - name: save mac address
+      set_fact:
+        mac_address: "{{ maddr_shell.stdout }}"
+    - name: Prepare report
+      delegate_to: localhost
+      become: false
+      copy:
+        dest: ../report.txt
+        content: |-
+          ## networking info
+          hostname: docker-{{ container_suffix }}
+          ip address: {{ container_ip }}
+          mac address: {{ mac_address }}
+
+          ## other info
+          group name: {{ container_suffix }}
+          group id: {{ container_gid }}
+          container number: {{ container_id }}
+          ssh public key: {{ pub_key }}
+
+          ## remaining steps
+          - reserve ip in router settings
+          - add hostname to dns
+          - add ssh key to github & clone repo
+          - record group id in Obsidian
+          - add to Ansible inventory (github/Obsidian repo)
+          - add to portainer (after setting up portainer-agent)
