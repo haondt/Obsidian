@@ -5,15 +5,18 @@
 ---
 - name: Create Docker LXC
   hosts: pve
+  vars:
+    docker_password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__playbooks.docker_hosts.password') }}"
+    pve_password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__playbooks.docker_hosts.password') }}"
   tasks:
     - name: create container
       community.general.proxmox:
         api_user: root@pam
-        api_password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__playbooks.pve.password') }}"
+        api_password: "{{ pve_password }}"
         api_host: pve
 
         hostname: "docker-{{ container_suffix }}"
-        password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__playbooks.docker_hosts.password') }}"
+        password: "{{ docker_password }}"
 
         ostemplate: 'local:vztmpl/debian-11-standard_11.3-1_amd64.tar.zst'
         nameserver: "192.168.1.69"
@@ -25,7 +28,7 @@
         cores: 2
         memory: 2048
         swap: 512
-        netif: '{"net0":"name=eth0,ip=dhcp,ip6=dhcp,bridge=vmbr0,firewall=1"}'
+        netif: '{"net0":"name=eth0,ip=dhcp,bridge=vmbr0,firewall=1"}'
         state: present
         features:
           - nesting=1
@@ -38,7 +41,7 @@
     - name: start container
       community.general.proxmox:
         api_user: root@pam
-        api_password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__playbooks.pve.password') }}"
+        api_password: "{{ pve_password }}"
         api_host: pve
 
         vmid: "{{ cid }}"
@@ -46,6 +49,19 @@
     - name: get container ip address
       shell: "pct exec {{ cid }} -- ip addr | grep -oE '192\\.[0-9.]+' -m 1 | head -1"
       register: ip
+      retries: 5
+      delay: 3
+      until: ip.stdout != ""
+    - name: add user
+      shell: |-
+        pct exec {{ cid }} -- bash -c "\
+          useradd -m docker &&\
+          echo "docker:{{ docker_password }}" | chpasswd &&\
+          usermod --shell /bin/bash docker &&\
+          usermod -aG sudo docker &&\
+          apt install sudo
+        "
+      no_log: true
     - name: copy data to file
       copy:
         dest: ../lxc.json

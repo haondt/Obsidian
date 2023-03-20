@@ -1,0 +1,29 @@
+
+# requires variables
+#   - container_suffix
+#   - container_hostname
+#   - container_id
+#   - container_ip
+#   - container_gid
+---
+- name: Add container to inventory
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Add host
+      add_host:
+        name: "{{ container_hostname }}"
+        groups: "docker_hosts"
+        ansible_ssh_host: "{{ container_ip }}"
+
+- name: Set up Docker LXC
+  hosts: "{{ container_hostname }}"
+  become: true
+  become_user: root
+  tasks:
+    - name: get container ip address
+      shell: "ip addr | grep -oE '192\\.[0-9.]+' -m 1 | head -1"
+      register: ip
+    - name: log ip
+      debug:
+        msg: "{{ ip.stdout }}"
