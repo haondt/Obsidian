@@ -53,6 +53,7 @@ services:
       - "${PGID}"
     environment:
       COM_OBSIDIAN_KVS_HOST: "${COM_OBSIDIAN_KVS_HOST}"
+      COM_OBSIDIAN_DNS_HOST: "${COM_OBSIDIAN_DNS_HOST}"
     volumes:
       - gitlab-runner-data:/etc/gitlab-runner/
       - ./gitlab_runner/config.toml:/etc/gitlab-runner/config.toml

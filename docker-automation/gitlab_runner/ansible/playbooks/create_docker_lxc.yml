@@ -15,12 +15,11 @@
         api_password: "{{ pve_password }}"
         api_host: pve
 
+        ostemplate: 'local:vztmpl/debian-11-standard_11.3-1_amd64.tar.zst'
+        nameserver: "{{ lookup('env', 'COM_OBSIDIAN_DNS_HOST') }}"
+
         hostname: "docker-{{ container_suffix }}"
         password: "{{ docker_password }}"
-
-        ostemplate: 'local:vztmpl/debian-11-standard_11.3-1_amd64.tar.zst'
-        nameserver: "192.168.1.69"
-
         node: pve
         unprivileged: true
         storage: VMs
