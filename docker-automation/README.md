@@ -21,3 +21,4 @@
     ```shell
     ./run.sh
     ```
+- The proxmox playbooks require `proxmoxer` (pip package) to be installed on the proxmox host

@@ -1,3 +1,5 @@
+# requires container_name variable
+# should probably be run with --limit [some-docker-host]
 ---
 - hosts: docker_hosts
   become: true

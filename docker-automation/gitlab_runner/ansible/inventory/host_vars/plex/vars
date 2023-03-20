@@ -1,4 +1,3 @@
 ---
 ansible_password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__inventory.host_vars.plex.password') }}"
 ansible_become_pass: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__inventory.host_vars.plex.password') }}"
-#ansible_become_method: sudo

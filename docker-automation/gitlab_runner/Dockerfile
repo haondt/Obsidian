@@ -14,4 +14,4 @@ RUN apt-get update -y && \
 RUN apt-get clean
 
 RUN pip install --upgrade pip
-RUN pip install ansible-core
+RUN pip install ansible

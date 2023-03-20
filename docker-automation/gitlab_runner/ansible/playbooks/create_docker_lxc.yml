@@ -1,0 +1,60 @@
+# requires proxomoxer (python package) to be installed on proxmox host
+# requires variables
+#   - container_suffix
+#   - container_gid
+---
+- name: Create Docker LXC
+  hosts: pve
+  tasks:
+    - name: create container
+      community.general.proxmox:
+        api_user: root@pam
+        api_password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__playbooks.pve.password') }}"
+        api_host: pve
+
+        hostname: "docker-{{ container_suffix }}"
+        password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__playbooks.docker_hosts.password') }}"
+
+        ostemplate: 'local:vztmpl/debian-11-standard_11.3-1_amd64.tar.zst'
+        nameserver: "192.168.1.69"
+
+        node: pve
+        unprivileged: true
+        storage: VMs
+        disk: 32
+        cores: 2
+        memory: 2048
+        swap: 512
+        netif: '{"net0":"name=eth0,ip=dhcp,ip6=dhcp,bridge=vmbr0,firewall=1"}'
+        state: present
+        features:
+          - nesting=1
+          - keyctl=1
+      register: container
+    - name: get container id
+      set_fact:
+        cid: "{{ container.msg | regex_search('(?:Deployed VM ([0-9]+))|(?:ID number ([0-9]+))', '\\1', '\\2')
+          | reject('equalto', None) | reject('equalto', '') | first | int }}"
+    - name: start container
+      community.general.proxmox:
+        api_user: root@pam
+        api_password: "{{ lookup('url', lookup('env', 'COM_OBSIDIAN_KVS_HOST') + '/url/ansible__playbooks.pve.password') }}"
+        api_host: pve
+
+        vmid: "{{ cid }}"
+        state: started
+    - name: get container ip address
+      shell: "pct exec {{ cid }} -- ip addr | grep -oE '192\\.[0-9.]+' -m 1 | head -1"
+      register: ip
+    - name: copy data to file
+      copy:
+        dest: ../lxc.json
+        content: |-
+          {
+            "container_suffix": "{{ container_suffix }}",
+            "hostname": "docker-{{ container_suffix }}",
+            "cid": "{{ cid }}",
+            "ip": "{{ ip.stdout }}"
+          }
+      delegate_to: localhost
+      run_once: true
