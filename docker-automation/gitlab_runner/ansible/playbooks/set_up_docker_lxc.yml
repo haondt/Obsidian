@@ -73,7 +73,7 @@
 - name: install docker 
   hosts: "docker-{{ container_suffix }}"
   become: true
-  become_user: docker
+  become_user: root
   tasks:
     - name: install docker packages
       apt:
