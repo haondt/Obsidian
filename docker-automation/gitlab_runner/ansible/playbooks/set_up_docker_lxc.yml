@@ -84,6 +84,7 @@
     - name: add docker gpg key
       apt_key:
         url: https://download.docker.com/linux/debian/gpg
+        state: present
     - name: set up repository
       apt_repository:
         repo: deb [arch=amd64] https://download.docker.com/linux/debian stable
