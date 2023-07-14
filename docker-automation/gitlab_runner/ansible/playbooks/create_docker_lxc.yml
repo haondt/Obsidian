@@ -47,7 +47,7 @@
     - name: get container ip address
       shell: "pct exec {{ cid }} -- ip addr | grep -oE '192\\.[0-9.]+' -m 1 | head -1"
       register: ip
-      retries: 10
+      retries: 5
       delay: 3
       until: ip.stdout != ""
     - name: add user
@@ -59,7 +59,7 @@
           usermod -aG sudo docker &&\
           apt install sudo
         "
-      no_log: true
+      no_log: false
     - name: copy data to file
       copy:
         dest: ../lxc.json
