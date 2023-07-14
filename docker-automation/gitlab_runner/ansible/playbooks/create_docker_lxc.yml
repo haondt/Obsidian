@@ -47,7 +47,7 @@
     - name: get container ip address
       shell: "pct exec {{ cid }} -- ip addr | grep -oE '192\\.[0-9.]+' -m 1 | head -1"
       register: ip
-      retries: 5
+      retries: 10
       delay: 3
       until: ip.stdout != ""
     - name: add user
