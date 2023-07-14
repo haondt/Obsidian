@@ -57,6 +57,7 @@
           echo "docker:{{ docker_password }}" | chpasswd &&\
           usermod --shell /bin/bash docker &&\
           usermod -aG sudo docker &&\
+          apt update &&\
           apt install sudo
         "
       no_log: false
